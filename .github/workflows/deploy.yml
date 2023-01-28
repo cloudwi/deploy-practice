@@ -64,7 +64,7 @@ jobs:
           key: ${{ secrets.AWS_EC2_KEY }}
           script: |
             sudo docker rm -f $(docker ps -qa)
-            sudo docker pull cloudwi/deploy-practice-backend
-            sudo docker pull cloudwi/deploy-practice-nignx
+            sudo docker pull ${{ secrets.DOCKER_REP }}/deploy-practice-backend
+            sudo docker pull ${{ secrets.DOCKER_REP }}/deploy-practice-nignx
             docker-compose up -d
             docker image prune -f
