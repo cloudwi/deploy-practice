@@ -43,16 +43,30 @@ jobs:
           ${{ runner.os }}-gradle-
 
     # main 설정 파일 생성 및 write
-    - name: Set .yml for main
+    - name: make application.yaml
       run: |
-        # main 설정 파일 디렉토리로 이동
+        
         cd ./src/main/resources
+        
         touch ./application-database.yaml
+        
         echo "${{ secrets.APPLICATION_YML }}" >> ./application.yml
       shell: bash
 
-
+    # Gradle build
     - name: Build with Gradle
-      uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+      run: ./gradlew bootJar
+
+    - name: web docker build and push
+      run: |
+        docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
+        docker build -t ${{ secrets.DOCKER_HUB_REP }}/deploy-practice-backend .
+        docker push ${{ secrets.DOCKER_HUB_REP }}/deploy-practice-backend
+        
+    - name: EC2 Docker Run
+      uses: appleboy/ssh-action@master
       with:
-        arguments: build
+        host: ${{ secrets.AWS_EC2_HOST }}
+        username: ubuntu
+        key: ${{ secrets.AWS_EC2_KEY }}
+        script: |
