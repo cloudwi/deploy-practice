@@ -38,11 +38,8 @@ jobs:
       # main 설정 파일 생성 및 write
       - name: make application.yaml
         run: |
-          
           cd ./src/main/resources
-          
           touch ./application-database.yaml
-          
           echo "${{ secrets.APPLICATION_YML }}" >> ./application.yml
         shell: bash
 
@@ -64,7 +61,7 @@ jobs:
           key: ${{ secrets.AWS_EC2_KEY }}
           script: |
             sudo docker rm -f $(docker ps -qa)
-            sudo docker pull ${{ secrets.DOCKER_REPO }}/second-eyes-web
-            sudo docker pull ${{ secrets.DOCKER_REPO }}/second-eyes-nginx
+            sudo docker pull ${{ secrets.DOCKER_REP }}/second-eyes-web
+            sudo docker pull ${{ secrets.DOCKER_REP }}/second-eyes-nginx
             docker-compose up -d
             docker image prune -f
