@@ -53,8 +53,8 @@ jobs:
       - name: web docker build and push
         run: |
           docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
-          docker build -f dockerfile -t ${{ secrets.DOCKER_HUB_REP }}/deploy-practice-backend .
-          docker push ${{ secrets.DOCKER_HUB_REP }}/deploy-practice-backend
+          docker build -f dockerfile -t cloudwi/deploy-practice-backend .
+          docker push cloudwi/deploy-practice-backend
 
       - name: EC2 Docker Run
         uses: appleboy/ssh-action@master
@@ -64,7 +64,7 @@ jobs:
           key: ${{ secrets.AWS_EC2_KEY }}
           script: |
             sudo docker rm -f $(docker ps -qa)
-            sudo docker pull ${{ secrets.DOCKER_REP }}/second-eyes-web
-            sudo docker pull ${{ secrets.DOCKER_REP }}/second-eyes-nginx
+            sudo docker pull cloudwi/deploy-practice-backend
+            sudo docker pull cloudwi/deploy-practice-nignx
             docker-compose up -d
             docker image prune -f
