@@ -63,6 +63,6 @@ jobs:
           key: ${{ secrets.AWS_EC2_KEY }}
           script: |
             docker rm -f $(docker ps -qa)
-            docker rmi ${{ secrets.DOCKER_HUB_USERNAME }}/도커 레파지토리 이름
-            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/도커 레파지토리 이름
+            docker rmi ${{ secrets.DOCKER_HUB_USERNAME }}/deploy-practice-backend
+            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/deploy-practice-backend
             docker-compose up -d
