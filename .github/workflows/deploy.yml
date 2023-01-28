@@ -53,10 +53,8 @@ jobs:
       - name: web docker build and push
         run: |
           docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
-          docker build -f dockerfile ${{ secrets.DOCKER_REP }}/deploy-practice-backend .
-          docker push ${{ secrets.DOCKER_REP }}/deploy-practice-backend
-          docker build -f dockerfile-nginx ${{ secrets.DOCKER_REP }}/deploy-practice-nginx .
-          docker push ${{ secrets.DOCKER_REP }}/deploy-practice-nginx
+          docker build -f dockerfile -t ${{ secrets.DOCKER_HUB_USERNAME }}/deploy-practice-backend .
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/deploy-practice-backend
 
       - name: EC2 Docker Run
         uses: appleboy/ssh-action@master
@@ -66,7 +64,7 @@ jobs:
           key: ${{ secrets.AWS_EC2_KEY }}
           script: |
             sudo docker rm -f $(docker ps -qa)
-            sudo docker pull ${{ secrets.DOCKER_REP }}/deploy-practice-backend
-            sudo docker pull ${{ secrets.DOCKER_REP }}/deploy-practice-nignx
+            sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/deploy-practice-backend
+#            sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/deploy-practice-nignx
             docker-compose up -d
             docker image prune -f
