@@ -1,10 +1,7 @@
-name: Java CI with Gradle
+name: Spring Boot & Gradle & Docker & EC2 CD
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
     branches:
       - main
 
@@ -13,18 +10,20 @@ permissions:
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
-
+    runs-on: ubuntu-latest #ubuntu-20.04
     steps:
+      # 기본 체크아웃
+      - name: Checkout
+        uses: actions/checkout@v3
 
-      - uses: actions/checkout@v3
+      # JDK version 설정
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
 
+      # 그래들 캐싱
       - name: Gradle Caching
         uses: actions/cache@v3
         with:
@@ -36,26 +35,26 @@ jobs:
             ${{ runner.os }}-gradle-
 
       # main 설정 파일 생성 및 write
-      - name: make application.yaml
+      - name: Set .yml for main
         run: |
+          # main 설정 파일 디렉토리로 이동
           cd ./src/main/resources
-          touch ./application-database.yaml
+          touch ./application.yml
           echo "${{ secrets.APPLICATION_YML }}" >> ./application.yml
         shell: bash
-
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
 
       # Gradle build
       - name: Build with Gradle
         run: ./gradlew bootJar
 
-      - name: web docker build and push
+      # Spring 어플리케이션 Docker Image 빌드
+      - name: Build Docker Image For Spring
         run: |
           docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
-          docker build -f dockerfile -t ${{ secrets.DOCKER_HUB_USERNAME }}/deploy-practice-backend .
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/deploy-practice-backend .
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/deploy-practice-backend
 
+      # 서버에서 Docker 이미지 실행
       - name: EC2 Docker Run
         uses: appleboy/ssh-action@master
         with:
@@ -63,7 +62,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.AWS_EC2_KEY }}
           script: |
-            sudo docker rm -f $(docker ps -qa)
-            sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/deploy-practice-backend
+            docker rm -f $(docker ps -qa)
+            docker rmi ${{ secrets.DOCKER_HUB_USERNAME }}/도커 레파지토리 이름
+            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/도커 레파지토리 이름
             docker-compose up -d
-            docker image prune -f
