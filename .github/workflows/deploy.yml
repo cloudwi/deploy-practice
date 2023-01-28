@@ -38,8 +38,8 @@ jobs:
         path: |
           ~/.gradle/caches
           ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
           ${{ runner.os }}-gradle-
 
     # main 설정 파일 생성 및 write
