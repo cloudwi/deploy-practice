@@ -53,8 +53,10 @@ jobs:
       - name: web docker build and push
         run: |
           docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
-          docker build -f dockerfile -t cloudwi/deploy-practice-backend .
-          docker push cloudwi/deploy-practice-backend
+          docker build -f dockerfile -t ${{ secrets.DOCKER_REP }}/deploy-practice-backend .
+          docker push ${{ secrets.DOCKER_REP }}/deploy-practice-backend
+          docker build -f dockerfile-nginx -t ${{ secrets.DOCKER_REP }}/deploy-practice-nginx .
+          docker push ${{ secrets.DOCKER_REP }}/deploy-practice-nginx
 
       - name: EC2 Docker Run
         uses: appleboy/ssh-action@master
