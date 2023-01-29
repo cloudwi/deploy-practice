@@ -34,15 +34,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      # main 설정 파일 생성 및 write
-      - name: Set .yml for main
-        run: |
-          # main 설정 파일 디렉토리로 이동
-          cd ./src/main/resources
-          touch ./application.yml
-          echo "${{ secrets.APPLICATION_YML }}" >> ./application.yml
-        shell: bash
-
       # Gradle build
       - name: Build with Gradle
         run: ./gradlew bootJar
