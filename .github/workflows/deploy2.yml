@@ -23,6 +23,15 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: application.yml created
+        uses: actions/checkout@v3
+      - run: touch ./src/main/resources/application.yml
+      - run: echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.yml
+      - uses: actions/upload-artifact@v3
+        with:
+          name: application.yml
+          path: ./src/main/resources/application.yml
+
       # 그래들 캐싱
       - name: Gradle Caching
         uses: actions/cache@v3
@@ -57,3 +66,4 @@ jobs:
             docker rmi ${{ secrets.DOCKER_HUB_USERNAME }}/deploy-practice-backend
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/deploy-practice-backend
             docker-compose up -d
+            
